@@ -1,0 +1,38 @@
+﻿@model Quizzes.Models.Quiz
+
+@{
+    ViewData["Title"] = "Result";
+}
+
+<div>
+    <br />
+    <div class="text-center">
+        @if (@ViewBag.correctAnswers == @ViewBag.numberOfQuestions)
+        {
+            <p>Udało Ci się odpowiedzieć poprawnie na wszystkie pytania! Gratulacje!</p>
+        }
+        else
+        {
+            <p>Udało Ci się odpowiedzieć poprawnie na @ViewBag.correctAnswers spośród @ViewBag.numberOfQuestions pytań!</p>
+        }
+    </div>
+
+    @foreach (var question in Model.Questions)
+    {
+        <div class="card my-2">
+            <div class="card-body">
+                <h6 class="card-title">@Html.DisplayFor(x => question.Content)</h6>
+
+                @foreach (var answer in question.Answers)
+                {
+                    <div style = @(answer.IsCorrect ? "background-color:lightgreen"
+                    : ((int[])ViewBag.checkedAnswers).Any(x => x == answer.Id) ? "background-color:salmon" : string.Empty)>
+                            <p class="card-text my-0">@Html.DisplayFor(x => answer.Content)</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <a asp-action="Index" class="btn btn-secondary">Powrót</a>
+</div>

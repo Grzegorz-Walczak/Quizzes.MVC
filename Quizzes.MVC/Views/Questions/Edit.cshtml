@@ -1,0 +1,57 @@
+﻿@model Quizzes.Models.Question
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<br />
+<h3>Edytuj pytanie</h3>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="QuizId" />
+
+            <div class="form-group">
+                <label asp-for="Content" class="control-label"></label>
+                <input asp-for="Content" class="form-control" />
+                <span asp-validation-for="Content" class="text-danger"></span>
+            </div>
+            <br />
+
+            @for (int i = 0; i < Model.Answers.Count; i++)
+            {
+                <input type="hidden" asp-for="Answers[i].Id" />
+                <input type="hidden" asp-for="Answers[i].QuestionId" />
+
+                <div class="form-group">
+                    <label asp-for="Answers[i].Content" class="control-label"></label>
+                    <div class="input-group my-1">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0" type="radio" name="correctAnswer" value=@i @(Model.Answers[i].IsCorrect ? "checked='true'" : string.Empty)>
+                        </div>
+                        <div class="form-group" style="width: 95%">
+                            <input asp-for="Answers[i].Content" class="form-control" />
+                        </div>
+                    </div>
+                    <span asp-validation-for="Answers[i].Content" class="text-danger"></span>
+                </div>
+            }
+
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Zapisz" class="btn btn-primary" />
+                <a asp-controller="Quizzes" asp-action="Details" asp-route-id="@Model.QuizId" class="btn btn-secondary">Anuluj</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

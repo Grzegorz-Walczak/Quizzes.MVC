@@ -1,0 +1,58 @@
+﻿@model Quizzes.Models.Quiz
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<br />
+<h3>Quiz "@Html.DisplayFor(model => model.Name)"</h3>
+<hr />
+
+<div>
+    <dl class="row">
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.Description)</dt>
+        <dd class = "col-sm-10">@Html.DisplayFor(model => model.Description)</dd>
+        
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.CreatedAt)</dt>
+        <dd class = "col-sm-10"> @Html.DisplayFor(model => model.CreatedAt) </dd>
+        
+        <dt class = "col-sm-2">@Html.DisplayNameFor(model => model.UpdatedAt)</dt>
+        <dd class = "col-sm-10">@Html.DisplayFor(model => model.UpdatedAt)</dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edytuj</a>
+    <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">Usuń</a>
+    <a asp-action="Index" class="btn btn-secondary">Powrót</a>
+</div>
+<br />
+
+@if (Model.Questions is not null)
+{
+    foreach (var question in Model.Questions)
+    {
+        <div class="card my-2">
+            <div class="card-body">
+                <h6 class="card-title">@Html.DisplayFor(x => question.Content)</h6>
+
+                @foreach (var answer in question.Answers)
+                {
+                    <div style = @(answer.IsCorrect ? "background-color:lightgreen" : string.Empty)>
+                        <p class="card-text my-0">@Html.DisplayFor(x => answer.Content)</p>
+                    </div>
+                }
+            </div>
+            <div class="card-footer" style="text-align: right">
+                <a asp-controller="Questions" asp-action="Edit" asp-route-id="@question.Id" class="btn btn-primary">Edytuj</a>
+                <a asp-controller="Questions" asp-action="Delete" asp-route-id="@question.Id" class="btn btn-danger">Usuń</a>
+            </div>
+        </div>
+    }
+}
+
+<br />
+<div>
+    <a class="btn btn-success" asp-controller="Questions" asp-action="Create" asp-route-quizId="@Model?.Id">
+        <i class="fa-sharp fa-regular fa-plus"></i> Dodaj pytanie
+    </a>
+</div>
