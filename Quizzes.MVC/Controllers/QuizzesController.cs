@@ -23,17 +23,23 @@ namespace Quizzes.MVC.Controllers
         }
 
         // GET: Quizzes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? searchPhrase)
         {
-            // System.Web.HttpContext.Current.User
-            // User.Identity.Name
-            // var username = HttpContext.User.Identity.Name;
-            // var xd = UserManager<User>.GetUserAsync().Result.Nick;
-            // var eee = HttpContext.Current.User.Identity.Name;
+            if (_context.Quiz == null)
+            {
+                return NotFound();
+            }
 
-            return _context.Quiz != null ?
-                          View(await _context.Quiz.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Quiz' is null.");
+            var quizzes = await _context.Quiz.ToListAsync();
+
+            if (searchPhrase is not null)
+            {
+                quizzes = quizzes
+                    .Where(q => q.Name.Contains(searchPhrase) || (q.Description != null && q.Description.Contains(searchPhrase)))
+                    .ToList();
+            }
+
+            return View(quizzes);
         }
 
         // GET: Quizzes/Details/5

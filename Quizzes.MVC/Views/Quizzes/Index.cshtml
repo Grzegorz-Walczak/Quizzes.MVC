@@ -8,10 +8,22 @@
 <h3>Quizy</h3>
 <hr />
 
-<div>
-    <a asp-action="Create" class="btn btn-success btn-big">
-        <i class="fa-sharp fa-regular fa-plus"></i> Utwórz nowy
-    </a>
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <a asp-action="Create" class="btn btn-success">
+                <i class="fa-sharp fa-regular fa-plus"></i> Utwórz nowy
+            </a>
+        </div>
+        <div class="col-4">
+            <form asp-action="Index">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="searchPhrase" placeholder="Wpisz fragment nazwy lub opisu...">
+                    <input type="submit" value="Szukaj" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 @foreach (var item in Model)
