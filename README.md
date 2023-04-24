@@ -13,7 +13,7 @@ update-database
 
 ## Screenshots
 
-![image](https://user-images.githubusercontent.com/131490943/233853387-be8420c8-f541-4cc7-9fb4-70337b388c2e.png)
+![image](https://user-images.githubusercontent.com/131490943/234072871-8cd8df76-adee-47ef-83a9-f42a963bf454.png)
 
 ![image](https://user-images.githubusercontent.com/131490943/233853972-6d9632c2-c623-4970-84b6-f858ffddefe7.png)
 
