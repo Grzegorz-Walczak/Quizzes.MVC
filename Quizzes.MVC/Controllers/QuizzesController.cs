@@ -34,8 +34,11 @@ namespace Quizzes.MVC.Controllers
 
             if (searchPhrase is not null)
             {
+                searchPhrase = searchPhrase.ToLower();
+
                 quizzes = quizzes
-                    .Where(q => q.Name.Contains(searchPhrase) || (q.Description != null && q.Description.Contains(searchPhrase)))
+                    .Where(q => q.Name.ToLower().Contains(searchPhrase)
+                        || (q.Description != null && q.Description.ToLower().Contains(searchPhrase)))
                     .ToList();
             }
 
