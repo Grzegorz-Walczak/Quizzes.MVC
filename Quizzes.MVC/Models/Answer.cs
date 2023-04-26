@@ -9,9 +9,9 @@ public class Answer
 
     [Required(ErrorMessage = "To pole jest wymagane.")]
     [DisplayName("Treść odpowiedzi")]
+    [MaxLength(250)]
     public string Content { get; set; } = string.Empty;
 
-    [Required]
     public bool IsCorrect { get; set; }
 
     public int QuestionId { get; set; }

@@ -30,7 +30,9 @@ namespace Quizzes.MVC.Controllers
                 return NotFound();
             }
 
-            var quizzes = await _context.Quiz.ToListAsync();
+            var quizzes = await _context.Quiz
+                .AsNoTracking()
+                .ToListAsync();
 
             if (searchPhrase is not null)
             {
@@ -120,33 +122,52 @@ namespace Quizzes.MVC.Controllers
         // GET: Result/5
         public async Task<IActionResult> Result(int id, int[] checkedAnswers)
         {
+            if (_context.Quiz == null)
+            {
+                return NotFound();
+            }
+
+            var quiz = await _context.Quiz
+                .Include(q => q.Questions)
+                .FirstOrDefaultAsync(q => q.Id == id);
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            var answers = quiz.Questions.Aggregate(new List<Answer>(), (a, b) =>
+            {
+                a.AddRange(b.Answers);
+                return a;
+            });
+
+            int correctAnswers;
             try
             {
-                var quiz = await _context.Quiz
-                    .Include(q => q.Questions)
-                    .FirstOrDefaultAsync(q => q.Id == id);
-
-                var answers = quiz.Questions.Aggregate(new List<Answer>(), (a, b) =>
+                correctAnswers = checkedAnswers.Count(id =>
                 {
-                    a.AddRange(b.Answers);
-                    return a;
+                    var answer = answers.Find(a => a.Id == id);
+                    if (answer == null)
+                    {
+                        throw new Exception("Answer not found.");
+                    }
+                    
+                    return answer.IsCorrect;
                 });
-
-                int correctAnswers = checkedAnswers.Count(id => answers.Find(a => a.Id == id).IsCorrect);
-                int numberOfQuestions = quiz.Questions.Count;
-
-                ViewBag.checkedAnswers = checkedAnswers;
-                ViewBag.correctAnswers = correctAnswers;
-                ViewBag.numberOfQuestions = numberOfQuestions;
-
-                return View(quiz);
             }
             catch
             {
-                NotFound();
+                return NotFound();
             }
 
-            return View();
+            int numberOfQuestions = quiz.Questions.Count;
+
+            ViewBag.checkedAnswers = checkedAnswers;
+            ViewBag.correctAnswers = correctAnswers;
+            ViewBag.numberOfQuestions = numberOfQuestions;
+
+            return View(quiz);
         }
 
         // GET: Quizzes/Edit/5
@@ -183,20 +204,14 @@ namespace Quizzes.MVC.Controllers
 
             try
             {
-                _context.Update(quiz);
                 quiz.UpdatedAt = DateTime.Now;
+
+                _context.Update(quiz);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!QuizExists(quiz.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
             return RedirectToAction("Details", new { id });
@@ -228,7 +243,7 @@ namespace Quizzes.MVC.Controllers
         {
             if (_context.Quiz == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.Quiz' is null.");
+                return NotFound();
             }
 
             var quiz = await _context.Quiz.FindAsync(id);

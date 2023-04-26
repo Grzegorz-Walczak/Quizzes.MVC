@@ -9,10 +9,11 @@ public class Question
 
     [Required(ErrorMessage = "To pole jest wymagane.")]
     [DisplayName("Treść")]
+    [MaxLength(250)]
     public string Content { get; set; } = string.Empty;
 
     public int QuizId { get; set; }
     public Quiz? Quiz { get; set; }
 
-    public IList<Answer>? Answers { get; set; }
+    public IList<Answer> Answers { get; set; } = new List<Answer>();
 }

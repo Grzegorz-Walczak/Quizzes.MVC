@@ -9,9 +9,11 @@ public class Quiz
 
     [DisplayName("Nazwa")]
     [Required(ErrorMessage = "To pole jest wymagane.")]
+    [MaxLength(100)]
     public string Name { get; set; } = string.Empty;
 
     [DisplayName("Opis")]
+    [MaxLength(500)]
     public string? Description { get; set; }
 
     [DisplayFormat(DataFormatString = "{0:d}")]
@@ -24,5 +26,5 @@ public class Quiz
 
     public bool isPublic { get; set; }
 
-    public IList<Question>? Questions { get; set; }
+    public IList<Question> Questions { get; set; } = new List<Question>();
 }

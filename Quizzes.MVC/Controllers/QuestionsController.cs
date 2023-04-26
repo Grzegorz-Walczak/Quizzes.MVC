@@ -58,34 +58,37 @@ namespace Quizzes.MVC.Controllers
                 return View(questionViewModel);
             }
 
-            try
-            {
-                var question = new Question()
-                {
-                    Content = questionViewModel.Content,
-                    Answers = questionViewModel.Answers.Select(x => new Answer()
-                    {
-                        Content = x.Content,
-                        IsCorrect = x.IsCorrect
-                    }).ToList(),
-                    QuizId = questionViewModel.QuizId
-                };
-
-                question.Answers[correctAnswer].IsCorrect = true;
-
-                var quiz = await _context.Quiz.FindAsync(question.QuizId);
-                quiz.UpdatedAt = DateTime.Now;
-
-                _context.Add(question);
-                _context.Update(quiz);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Details", "Quizzes", new { id = question.QuizId });
-            }
-            catch
+            if (_context.Quiz == null)
             {
                 return NotFound();
             }
+
+            var question = new Question()
+            {
+                Content = questionViewModel.Content,
+                Answers = questionViewModel.Answers.Select(x => new Answer()
+                {
+                    Content = x.Content,
+                    IsCorrect = x.IsCorrect
+                }).ToList(),
+                QuizId = questionViewModel.QuizId
+            };
+
+            question.Answers[correctAnswer].IsCorrect = true;
+
+            var quiz = await _context.Quiz.FindAsync(question.QuizId);
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            quiz.UpdatedAt = DateTime.Now;
+
+            _context.Add(question);
+            _context.Update(quiz);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Quizzes", new { id = question.QuizId });
         }
 
         // GET: Questions/Edit/5
@@ -110,7 +113,7 @@ namespace Quizzes.MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, int correctAnswer, Question question)
         {
-            if (id != question.Id)
+            if (id != question.Id || _context.Quiz == null)
             {
                 return NotFound();
             }
@@ -120,23 +123,21 @@ namespace Quizzes.MVC.Controllers
                 return View(question);
             }
 
-            try
-            {
-                question.Answers[correctAnswer].IsCorrect = true;
+            question.Answers[correctAnswer].IsCorrect = true;
 
-                var quiz = await _context.Quiz.FindAsync(question.QuizId);
-                quiz.UpdatedAt = DateTime.Now;
-
-                _context.Update(question);
-                _context.Update(quiz);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Details", "Quizzes", new { id = question.QuizId });
-            }
-            catch
+            var quiz = await _context.Quiz.FindAsync(question.QuizId);
+            if (quiz == null)
             {
                 return NotFound();
             }
+
+            quiz.UpdatedAt = DateTime.Now;
+
+            _context.Update(question);
+            _context.Update(quiz);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Quizzes", new { id = question.QuizId });
         }
 
         // GET: Questions/Delete/5

@@ -9,7 +9,7 @@ public class QuestionViewModel
     [DisplayName("Treść pytania")]
     public string Content { get; set; } = string.Empty;
 
-    public IList<AnswerViewModel>? Answers { get; set; }
+    public IList<AnswerViewModel> Answers { get; set; } = new List<AnswerViewModel>();
     
     public int QuizId { get; set; }
 }
